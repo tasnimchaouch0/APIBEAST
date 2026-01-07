@@ -65,25 +65,25 @@ function App() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'passed': return 'bg-green-500'
+      case 'passed': return 'bg-emerald-500'
       case 'failed': return 'bg-red-500'
-      case 'error': return 'bg-yellow-500'
-      default: return 'bg-gray-500'
+      case 'error': return 'bg-amber-500'
+      default: return 'bg-slate-500'
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 text-white">
-      {/* Animated background */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 text-white relative overflow-hidden">
+      {/* Animated background orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-40 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-0 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-75"></div>
-        <div className="absolute -bottom-20 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-150"></div>
+        <div className="absolute top-40 right-0 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute -bottom-20 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 py-12">
         {/* Header */}
-        <div className="mb-16 text-center">
+        <div className="text-center mb-16">
           <div className="inline-block">
             <h1 className="text-7xl font-black mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent tracking-tight">
               APIBeast
@@ -95,8 +95,8 @@ function App() {
           </p>
         </div>
 
-        {/* Main Card */}
-        <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8 mb-8">
+        {/* Main Input Card */}
+        <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8 mb-8 hover:border-white/20 transition-all">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@ function App() {
             </div>
             <h2 className="text-3xl font-bold">Generate Tests</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="group">
               <label className="block text-sm font-semibold mb-3 text-slate-300 group-hover:text-purple-400 transition-colors">
@@ -118,7 +118,7 @@ function App() {
                   value={endpoint}
                   onChange={(e) => setEndpoint(e.target.value)}
                   placeholder="https://api.example.com/users"
-                  className="relative w-full px-5 py-4 bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all placeholder:text-slate-600"
+                  className="relative w-full px-5 py-4 bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
@@ -132,7 +132,7 @@ function App() {
                 <select
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
-                  className="relative w-full px-5 py-4 bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all appearance-none cursor-pointer"
+                  className="relative w-full px-5 py-4 bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all appearance-none cursor-pointer"
                 >
                   <option value="GET" className="bg-slate-900">GET</option>
                   <option value="POST" className="bg-slate-900">POST</option>
@@ -166,7 +166,7 @@ function App() {
           </button>
 
           {error && (
-            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl backdrop-blur-sm">
+            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="flex items-start gap-3">
                 <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -178,28 +178,30 @@ function App() {
         </div>
 
         {tests.length > 0 && (
-          <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <div>
-                <h2 className="text-3xl font-bold mb-2">Generated Tests</h2>
-                <p className="text-slate-400">
-                  <span className="text-purple-400 font-semibold">{tests.length}</span> test cases ready
-                </p>
+          <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8 mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-3xl font-bold">Generated Tests</h2>
               </div>
               <button
                 onClick={handleExecuteTests}
                 disabled={executing}
-                className="group relative px-6 py-3 overflow-hidden"
+                className="group relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl blur-lg group-hover:blur-xl transition-all"></div>
-                <div className="relative bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:from-slate-700 disabled:to-slate-700 px-6 py-3 rounded-xl font-semibold transition-all transform group-hover:scale-105 active:scale-95 disabled:scale-100">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl blur-lg group-hover:blur-xl transition-all"></div>
+                <div className="relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:from-slate-700 disabled:to-slate-700 rounded-xl font-bold transition-all transform group-hover:scale-105 active:scale-95 disabled:scale-100">
                   {executing ? (
                     <span className="flex items-center gap-2">
                       <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Executing...
+                      Running...
                     </span>
                   ) : (
                     'Execute All Tests'
@@ -208,32 +210,28 @@ function App() {
               </button>
             </div>
 
-            <div className="space-y-3">
-              {tests.map((test, idx) => (
-                <div 
-                  key={test.id} 
-                  className="group relative overflow-hidden"
-                  style={{ animationDelay: `${idx * 50}ms` }}
+            <div className="grid gap-4">
+              {tests.map((test, index) => (
+                <div
+                  key={test.id}
+                  className="group relative overflow-hidden backdrop-blur-sm bg-slate-900/30 border border-white/5 rounded-2xl p-6 hover:border-purple-500/30 transition-all"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="relative bg-slate-900/30 backdrop-blur-sm border border-white/5 rounded-xl p-5 hover:border-purple-500/30 transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg flex items-center justify-center flex-shrink-0 border border-purple-500/20">
-                        <span className="text-purple-400 font-bold">{idx + 1}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg mb-1 text-white group-hover:text-purple-300 transition-colors">
-                          {test.name}
-                        </h3>
-                        <p className="text-slate-400 text-sm mb-3 line-clamp-2">{test.description}</p>
-                        <div className="flex flex-wrap gap-3 text-xs">
-                          <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-300 rounded-full font-medium">
-                            {test.method}
-                          </span>
-                          <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 rounded-full font-medium">
-                            Status: {test.expected_status}
-                          </span>
-                        </div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-2xl group-hover:blur-3xl transition-all"></div>
+                  
+                  <div className="relative flex items-start gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold mb-2 text-white">{test.name}</h3>
+                      <p className="text-slate-400 text-sm mb-3">{test.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-lg text-purple-300 text-xs font-medium">
+                          {test.method}
+                        </span>
+                        <span className="px-3 py-1 bg-slate-700/50 border border-slate-600/50 rounded-lg text-slate-300 text-xs font-mono truncate max-w-md">
+                          Expected: {test.expected_status}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -244,77 +242,74 @@ function App() {
         )}
 
         {results.length > 0 && (
-          <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold mb-3">Test Results</h2>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <span className="text-emerald-400 font-semibold">
-                    {results.filter(r => r.status === 'passed').length} Passed
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="text-red-400 font-semibold">
-                    {results.filter(r => r.status === 'failed').length} Failed
-                  </span>
-                </div>
-                <div className="text-slate-400">
-                  Total: {results.length}
-                </div>
+          <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
               </div>
+              <h2 className="text-3xl font-bold">
+                Test Results
+                <span className="ml-3 text-xl text-slate-400">
+                  {results.filter(r => r.status === 'passed').length}/{results.length} Passed
+                </span>
+              </h2>
             </div>
 
-            <div className="space-y-3">
-              {results.map((result, idx) => (
-                <div 
-                  key={result.test_id} 
-                  className="group relative overflow-hidden"
-                  style={{ animationDelay: `${idx * 50}ms` }}
+            <div className="grid gap-4">
+              {results.map((result, index) => (
+                <div
+                  key={result.test_id}
+                  className="group relative overflow-hidden backdrop-blur-sm bg-slate-900/30 border border-white/5 rounded-2xl p-6 hover:border-blue-500/30 transition-all"
                 >
-                  <div className={`absolute inset-0 ${result.status === 'passed' ? 'bg-gradient-to-r from-emerald-500/10 to-green-500/10' : 'bg-gradient-to-r from-red-500/10 to-orange-500/10'} rounded-xl opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-                  <div className="relative bg-slate-900/30 backdrop-blur-sm border border-white/5 rounded-xl p-5 hover:border-white/10 transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${getStatusColor(result.status)} shadow-lg`}></div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-lg text-white">{result.test_name}</h3>
-                          <span className="text-slate-400 text-sm font-mono bg-slate-800/50 px-2 py-1 rounded">
-                            {result.duration_ms}ms
-                          </span>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full blur-2xl group-hover:blur-3xl transition-all"></div>
+                  
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center font-bold text-sm">
+                          {index + 1}
                         </div>
-                        
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="text-slate-400">Status:</span>
-                            <span className={`font-semibold uppercase ${result.status === 'passed' ? 'text-emerald-400' : 'text-red-400'}`}>
-                              {result.status}
-                            </span>
-                          </div>
-                          {result.response_status && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-slate-400">Response Code:</span>
-                              <span className="text-white font-mono bg-slate-800/50 px-2 py-0.5 rounded">
-                                {result.response_status}
-                              </span>
-                            </div>
-                          )}
-                          {result.errors.length > 0 && (
-                            <div className="mt-3 p-3 bg-red-500/5 border border-red-500/20 rounded-lg">
-                              <p className="font-semibold text-red-400 mb-2">Errors:</p>
-                              <ul className="space-y-1">
-                                {result.errors.map((err, i) => (
-                                  <li key={i} className="text-red-300 text-xs flex items-start gap-2">
-                                    <span className="text-red-500 mt-0.5">•</span>
-                                    <span>{err}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">{result.test_name}</h3>
+                          <p className="text-slate-400 text-sm">{result.duration_ms}ms</p>
                         </div>
                       </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-4 py-2 ${getStatusColor(result.status)} bg-opacity-20 border border-current rounded-xl font-bold text-sm uppercase tracking-wide`}>
+                          {result.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {result.response_status && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-slate-500 font-medium">Status Code:</span>
+                          <span className={`px-2 py-1 rounded-lg font-mono ${
+                            result.response_status >= 200 && result.response_status < 300
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                          }`}>
+                            {result.response_status}
+                          </span>
+                        </div>
+                      )}
+
+                      {result.errors.length > 0 && (
+                        <div className="mt-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+                          <p className="text-red-400 font-semibold text-sm mb-2">Errors:</p>
+                          <ul className="space-y-1">
+                            {result.errors.map((err, i) => (
+                              <li key={i} className="text-red-300 text-sm flex items-start gap-2">
+                                <span className="text-red-500 mt-1">•</span>
+                                <span className="font-mono">{err}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
