@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apibeast-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_API_URL=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+      - RUST_LOG=info
+    networks:
+      - apibeast-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: apibeast-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - apibeast-network
+    restart: unless-stopped
+
+networks:
+  apibeast-network:
+    driver: bridge
