@@ -6,11 +6,14 @@ const API_BASE_URL = 'http://127.0.0.1:8080/api'
 function App() {
   const [endpoint, setEndpoint] = useState('')
   const [method, setMethod] = useState('GET')
+  const [headers, setHeaders] = useState('')
+  const [body, setBody] = useState('')
   const [loading, setLoading] = useState(false)
   const [tests, setTests] = useState([])
   const [error, setError] = useState(null)
   const [executing, setExecuting] = useState(false)
   const [results, setResults] = useState([])
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   const handleGenerateTests = async () => {
     if (!endpoint) {
@@ -23,10 +26,26 @@ function App() {
     setTests([])
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/generate-tests`, {
+      const requestData = {
         endpoint,
         method
-      })
+      }
+      
+      if (headers.trim()) {
+        try {
+          requestData.headers = JSON.parse(headers)
+        } catch (e) {
+          setError('Invalid JSON in headers')
+          setLoading(false)
+          return
+        }
+      }
+      
+      if (body.trim() && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+        requestData.body = body
+      }
+      
+      const response = await axios.post(`${API_BASE_URL}/generate-tests`, requestData)
 
       if (response.data.success) {
         setTests(response.data.tests)
@@ -143,6 +162,56 @@ function App() {
               </div>
             </div>
           </div>
+
+          {/* Advanced Options Toggle */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="w-full mb-4 px-4 py-2 text-sm text-slate-400 hover:text-purple-400 transition-colors flex items-center justify-center gap-2"
+          >
+            <svg className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+            {showAdvanced ? 'Hide' : 'Show'} Advanced Options (Headers & Body)
+          </button>
+
+          {/* Advanced Options */}
+          {showAdvanced && (
+            <div className="space-y-4 mb-6">
+              <div className="group">
+                <label className="block text-sm font-semibold mb-3 text-slate-300 group-hover:text-purple-400 transition-colors">
+                  Headers (JSON)
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                  <textarea
+                    value={headers}
+                    onChange={(e) => setHeaders(e.target.value)}
+                    placeholder='{"Authorization": "Bearer token", "Content-Type": "application/json"}'
+                    rows={3}
+                    className="relative w-full px-5 py-4 bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono text-sm"
+                  />
+                </div>
+              </div>
+
+              {(method === 'POST' || method === 'PUT' || method === 'PATCH') && (
+                <div className="group">
+                  <label className="block text-sm font-semibold mb-3 text-slate-300 group-hover:text-purple-400 transition-colors">
+                    Request Body (JSON)
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                    <textarea
+                      value={body}
+                      onChange={(e) => setBody(e.target.value)}
+                      placeholder='{"title": "Test", "body": "Content", "userId": 1}'
+                      rows={5}
+                      className="relative w-full px-5 py-4 bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono text-sm"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <button
             onClick={handleGenerateTests}
@@ -294,6 +363,24 @@ function App() {
                           }`}>
                             {result.response_status}
                           </span>
+                        </div>
+                      )}
+
+                      {result.response_body && (
+                        <div className="mt-3">
+                          <details className="group/details">
+                            <summary className="cursor-pointer text-sm font-semibold text-slate-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                              <svg className="w-4 h-4 transition-transform group-open/details:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              View Response
+                            </summary>
+                            <div className="mt-3 p-4 bg-slate-950/50 border border-white/5 rounded-xl overflow-x-auto">
+                              <pre className="text-xs text-slate-300 font-mono">
+                                {JSON.stringify(result.response_body, null, 2)}
+                              </pre>
+                            </div>
+                          </details>
                         </div>
                       )}
 
