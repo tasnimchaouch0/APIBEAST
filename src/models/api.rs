@@ -7,6 +7,7 @@ pub struct GenerateTestsRequest {
     pub method: Option<String>,
     pub openapi_spec: Option<String>,
     pub headers: Option<HashMap<String, String>>,
+    pub body: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
