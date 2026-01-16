@@ -2,8 +2,13 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
+fn generate_id() -> String {
+    Uuid::new_v4().to_string()
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TestCase {
+    #[serde(default = "generate_id")]
     pub id: String,
     pub name: String,
     pub description: String,

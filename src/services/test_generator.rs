@@ -33,41 +33,29 @@ impl TestGeneratorService {
         let method = request.method.as_deref().unwrap_or("GET");
         
         format!(
-            r#"You are an expert API testing engineer. Generate comprehensive test cases for the following API endpoint.
+            r#"Generate 8 API test cases for {} {}.
 
-API Details:
-- Method: {}
-- Endpoint: {}
+CRITICAL RULES:
+1. Return ONLY a JSON array - NO markdown, NO explanation, NO text before or after
+2. Each test MUST have "assertions" as an empty array: []
+3. DO NOT use strings like "Response body contains..." for assertions
+4. Use null for empty body, not empty string
 
-Generate test cases covering:
-1. Success cases (200, 201)
-2. Client errors (400, 401, 403, 404)
-3. Server errors (500, 503)
-4. Edge cases (empty data, large payloads, special characters)
-5. Authentication scenarios
-6. Rate limiting scenarios
-
-Return ONLY a valid JSON array of test cases with this exact structure:
+Required JSON structure:
 [
   {{
     "name": "Test name",
-    "description": "What this test validates",
+    "description": "Test description",
     "method": "{}",
     "endpoint": "{}",
     "headers": {{}},
     "body": null,
     "expected_status": 200,
-    "assertions": [
-      {{
-        "field": "status",
-        "operator": "equals",
-        "expected": 200
-      }}
-    ]
+    "assertions": []
   }}
 ]
 
-Generate at least 10 diverse test cases. Return ONLY the JSON array, no explanation."#,
+Generate exactly 8 tests covering: success (200), client errors (400, 401, 404), server error (500), and edge cases."#,
             method, endpoint, method, endpoint
         )
     }
@@ -94,6 +82,17 @@ Generate at least 10 diverse test cases. Return ONLY the JSON array, no explanat
             .json(&request_body)
             .send()
             .await?;
+        
+        // Check if the response is successful
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response.text().await?;
+            return Err(anyhow::anyhow!(
+                "Gemini API returned error status {}: {}. Check your API key and endpoint.",
+                status,
+                error_text
+            ));
+        }
         
         let response_json: serde_json::Value = response.json().await?;
         
@@ -123,12 +122,19 @@ Generate at least 10 diverse test cases. Return ONLY the JSON array, no explanat
     
     fn extract_json_array(&self, text: &str) -> String {
         // Remove markdown code blocks if present
-        let cleaned = text
+        let mut cleaned = text
             .trim()
             .trim_start_matches("```json")
             .trim_start_matches("```")
             .trim_end_matches("```")
             .trim();
+        
+        // Find the first [ and last ] to extract just the JSON array
+        if let Some(start) = cleaned.find('[') {
+            if let Some(end) = cleaned.rfind(']') {
+                cleaned = &cleaned[start..=end];
+            }
+        }
         
         cleaned.to_string()
     }

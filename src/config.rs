@@ -20,7 +20,7 @@ impl Config {
             gemini_api_key: env::var("GEMINI_API_KEY")
                 .expect("GEMINI_API_KEY must be set"),
             gemini_api_url: env::var("GEMINI_API_URL")
-                .unwrap_or_else(|_| "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent".to_string()),
+                .unwrap_or_else(|_| "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent".to_string()),
             database_url: env::var("DATABASE_URL")
                 .unwrap_or_else(|_| "sqlite:./apibeast.db".to_string()),
         }
